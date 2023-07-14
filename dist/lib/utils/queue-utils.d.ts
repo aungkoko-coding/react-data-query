@@ -1,0 +1,14 @@
+type OnInvalidateFunctionType = () => void;
+type OnQueryChangesFunctionType = (data: any, status: string, reason: string | Error) => void;
+type OnCancelQueryFunctionType = () => void;
+export declare const subscribed: (hookId: string, queryKey: string) => boolean;
+export declare const subscribeChanges: (hookId: string, queryKey: string, onQueryChanges: OnQueryChangesFunctionType, onInvalidate: OnInvalidateFunctionType, onCancelQuery: OnCancelQueryFunctionType) => void;
+export declare const unsubscribeChanges: (hookId: string, queryKey: string) => void;
+export declare const getQueryChangesCallbacks: (queryKey: string) => OnQueryChangesFunctionType[] | null;
+export declare const getInvalidationCallbacks: (queryKey: string) => OnInvalidateFunctionType[] | null;
+export declare const getCancelQueryCallbacks: (queryKey: string) => OnCancelQueryFunctionType[] | null;
+export declare const addToOngoingRequestQueue: (queryKey: string, requestID: string) => void;
+export declare const removeFromOngoingRequestQueue: (queryKey: string) => boolean;
+export declare const isInOngoingRequestQueue: (queryKey: string) => boolean;
+export declare const isActualOngoingRequest: (queryKey: string, requestID: string) => boolean;
+export {};
