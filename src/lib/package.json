@@ -1,10 +1,11 @@
 {
   "name": "react-data-query",
-  "version": "2.1.2",
+  "version": "2.1.5",
   "description": "Client side data fetching and callback-based state management library",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AKK-soft-dev/react-data-query.git"
   },
   "keywords": [
     "react",
@@ -14,6 +15,7 @@
   ],
   "author": "Aung Ko Ko",
   "license": "MIT",
+  "homepage": "https://github.com/AKK-soft-dev/react-data-query#readme",
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -405,7 +405,9 @@ export const useDataQuery = (
   }
 
   // Register callback that will be invoked when window gain focus after losing it
-  const isWindowFocused = useRef(document.hasFocus());
+  const isWindowFocused = useRef(
+    typeof document !== "undefined" && document.hasFocus()
+  );
   useEffect(() => {
     const handleFocus = () => {
       if (!isWindowFocused.current) {

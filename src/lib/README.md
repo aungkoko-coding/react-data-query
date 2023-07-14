@@ -19,7 +19,7 @@ Client side data fetching and callback-based state management library. Library's
 - `1.0.0` and `2.0.0` were deprecated. Because of unexpected Error.
 - `2.0.2`, `2.0.3` and `2.0.4` were unpublished. Because I made a small change and published it without testing. As the result, it causes the Error. I will try not to happen like that again.
 - `2.0.9` - Fixed setting data of `useInfiniteDataQuery` via `setQueryData` and `setQueriesData`. Read API Reference of `useInfiniteDataQuery`.
-- `2.1.0` integrated with TypeScript.
+- `2.1.4` integrated with TypeScript.
   > Please install the latest version
 
 ## More Documentations
