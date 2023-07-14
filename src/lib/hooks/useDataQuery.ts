@@ -38,6 +38,8 @@ import {
   UseDataQueryOptionsType,
 } from "../types/Hooks.type";
 
+export { Context } from "../types/Hooks.type";
+
 const statuses = status;
 
 /**

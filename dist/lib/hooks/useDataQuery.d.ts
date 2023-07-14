@@ -1,5 +1,6 @@
 import { DataQueryKeyType } from "../context/ProviderTypes.type";
 import { FetcherType, ReasonType, UseDataQueryOptionsType } from "../types/Hooks.type";
+export { Context } from "../types/Hooks.type";
 /**
  *
  * Utility Hook to make developer's life easier. This Hook will help you in fetching data and keep you away from handling caches. You don't need to implement imperative stuffs, just focus on business logic.

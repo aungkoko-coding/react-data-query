@@ -1,10 +1,14 @@
-import { OptionsType } from "../context/ProviderTypes.type";
+import { DataQueryKeyType, OptionsType } from "../context/ProviderTypes.type";
 
 export type ReasonType = Error | string | null;
 
 export type MutatorFunType = (newData: any) => Promise<any>;
 
-export type FetcherType = null | undefined | ((context: any) => Promise<any>);
+export type Context = { dataQueryKey: DataQueryKeyType; param: any };
+export type FetcherType =
+  | null
+  | undefined
+  | ((context: Context) => Promise<any>);
 
 export type OnSuccessFunType = (data: any) => void;
 export type OnErrorFunType = (err: ReasonType) => void;

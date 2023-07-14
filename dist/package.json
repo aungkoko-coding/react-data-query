@@ -1,6 +1,6 @@
 {
   "name": "react-data-query",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Client side data fetching and callback-based state management library",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
