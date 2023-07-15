@@ -16,6 +16,6 @@ export declare const useDataMutation: (mutator: MutatorFunType, callbacks: Defau
     isMutating: boolean;
     isError: boolean;
     error: Error | null;
-    mutate: (newData: any) => void;
+    mutate: (newData: any) => Promise<void>;
 };
 export {};
