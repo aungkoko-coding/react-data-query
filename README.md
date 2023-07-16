@@ -29,7 +29,7 @@ Client side data fetching and callback-based state management library. Library's
 
 ## Live Demos
 
-https://promptopia-akk-rdq.vercel.app/
+https://promptopia-akk-rdq.vercel.app/ [github link](https://github.com/AKK-soft-dev/promptopia-akk-rdq)
 <br /><br />
 More demos are coming soon!
 
