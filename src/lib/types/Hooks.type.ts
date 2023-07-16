@@ -1,5 +1,7 @@
 import { DataQueryKeyType, OptionsType } from "../context/ProviderTypes.type";
 
+export { DataQueryKeyType };
+
 export type ReasonType = Error | string | null;
 
 export type MutatorFunType = (newData: any) => Promise<any>;

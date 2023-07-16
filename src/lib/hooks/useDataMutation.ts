@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { MutatorFunType } from "../types/Hooks.type";
 
-type DefaultOptionsType = {
+export { MutatorFunType };
+
+export type MutationCallbacksType = {
   onSuccess?: (data: any, context: any) => any;
   onError?: (err: Error, data: any, context: any) => any;
   onSettled?: (data: any, err: Error | null, context: any) => any;
@@ -16,7 +18,7 @@ type DefaultOptionsType = {
  */
 export const useDataMutation = (
   mutator: MutatorFunType,
-  callbacks: DefaultOptionsType
+  callbacks: MutationCallbacksType
 ) => {
   const [isMutating, setIsMutating] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -40,18 +42,18 @@ export const useDataMutation = (
           context = await onMutate(newData);
         }
         data = await mutator(newData);
-        onSuccess && onSuccess(data, context);
+        typeof onSuccess === "function" && onSuccess(data, context);
       } catch (err) {
         isError = true;
         error = err as Error | null;
-        onError && onError(error as Error, newData, context);
+        typeof onError === "function" &&
+          onError(error as Error, newData, context);
       } finally {
-        console.log("finally", { isError });
         setIsError(isError);
-        onError && setError(error);
+        setError(error);
         setIsMutating(false);
         setData(data);
-        onSettled && onSettled(newData, error, context);
+        typeof onSettled === "function" && onSettled(newData, error, context);
       }
     }
   };

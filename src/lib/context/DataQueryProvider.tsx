@@ -16,6 +16,8 @@ import {
   ProviderPropsType,
 } from "./ProviderTypes.type";
 
+export { ProviderPropsType };
+
 const defaultOptions = {
   cacheTime: 1000 * 60 * 5, // default 5 mins. set the cache time duration. If it has elapsed, state data will be initialized with empty data when the component mounts or on dataQueryKey changes.
   staleTime: 1000 * 10, // 10 secs by default. This will be used to determine whether the data is stale or not. When staleTime has elapsed, the component will be notified that the data is stale i.e the component will be re-rendered.

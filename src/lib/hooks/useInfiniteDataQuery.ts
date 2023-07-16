@@ -10,6 +10,8 @@ import {
   UseDataQueryOptionsType,
 } from "../types/Hooks.type";
 
+export { FetcherType, ReasonType };
+
 type DefaultFunctionsType = {
   /**
    * Use to provide param for the next network request

@@ -24,6 +24,7 @@ Client side data fetching and callback-based state management library. Library's
 - `2.0.2`, `2.0.3` and `2.0.4` were unpublished. Because I made a small change and published it without testing. As the result, it causes the Error. I will try not to happen like that again.
 - `2.0.9` - Fixed setting data of `useInfiniteDataQuery` via `setQueryData` and `setQueriesData`. Read API Reference of `useInfiniteDataQuery`
 - `2.1.0` integrated with TypeScript.
+- From `2.1.9`, you can import TypeScript types.
   > Please install the latest version
 
 ## Live Demos
@@ -119,10 +120,23 @@ const fetcher = (context) => fetch('url`).then(res => res.json());
 > Note also that you should not try to catch network related error in `fetcher` function. `useDataQuery` will notify you whenever the error occurs.
 
 - `options` - to override the `options` received from `DataQueryProvider`. You can also pass callback functions such as `onSuccess`, `onError`, `onSettled`, and `onMutated`.
+
   - `onSuccess(data)` - which will be invoked when network request successfully completed.
-  - `onError(reason)` - which will be invoked when network related error has occurred.
+  - `onError(reason)` - which will be invoked when network related error has occurred. All `onError` callbacks passed to library Hooks will not automatically be invoked on Server Error (HTTP statuses like `404`, `500`). You must explicitly throw it in your fetcher function.
+
+  ```js
+  fetch(...).then(res => {
+    if(!res.ok) throw new Error(...)
+    return res.json();
+  })
+  ```
+
   - `onSettled(data, reason)` - which will be invoked whether or not succeeded or failed`.
   - `onMutated(data)` - which will be invoked when you invoke `setQueryData` and `setQueriesData` functions returned from `useDataQueryMagic` Hook.
+
+  ```
+
+  ```
 
 **Return**
 Read only query instance object whose properties are :

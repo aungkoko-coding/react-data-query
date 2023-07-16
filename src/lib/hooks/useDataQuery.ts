@@ -36,9 +36,20 @@ import {
   OnSuccessFunType,
   ReasonType,
   UseDataQueryOptionsType,
+  Context,
 } from "../types/Hooks.type";
 
-export { Context } from "../types/Hooks.type";
+export {
+  Context,
+  DataQueryKeyType,
+  FetcherType,
+  UseDataQueryOptionsType,
+  OnErrorFunType,
+  OnMutatedFunType,
+  OnSettledFunType,
+  OnSuccessFunType,
+  ReasonType,
+};
 
 const statuses = status;
 

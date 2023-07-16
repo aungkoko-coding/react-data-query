@@ -3,7 +3,8 @@ import { useDataQueryContext } from "../context/DataQueryProvider";
 import { clearAllCache, clearCache, getFromCache } from "../utils/cache-utils";
 import { DataQueryKeyType } from "../context/ProviderTypes.type";
 
-type QuerySetterType = (prevData: any) => void | any;
+export type QuerySetterType = (prevData: any) => void | any;
+export { DataQueryKeyType };
 
 /**
  * Controls cache and network requests
