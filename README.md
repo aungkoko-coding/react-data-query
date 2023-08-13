@@ -25,17 +25,20 @@ Client side data fetching and callback-based state management library. Library's
 - `2.0.9` - Fixed setting data of `useInfiniteDataQuery` via `setQueryData` and `setQueriesData`. Read API Reference of `useInfiniteDataQuery`
 - `2.1.0` integrated with TypeScript.
 - From `2.1.9`, you can import TypeScript types.
+- `2.2.0` - From this version, giving you the flexibilities to describe what `data` type will be returned and how the shape of the `context` will be look like. And more...
+  <br />
   > Please install the latest version
 
 ## Live Demos
 
-https://promptopia-akk-rdq.vercel.app/
+<!-- https://promptopia-akk-rdq.vercel.app/
 <a href="https://github.com/AKK-soft-dev/promptopia-akk-rdq">
 <img src="https://github.com/fluidicon.png" alt="GitHub Icon" width="15" height="15">
 </a>
 
-<br /><br />
-More demos are coming soon!
+<br /><br /> -->
+
+Coming soon!
 
 ## Installation
 
@@ -105,6 +108,31 @@ export const Pets = (props) => {
 
 `useDataQuery`, `useDataMutation`, `useInfiniteDataQuery`, `useExperimentalInfiniteScrollDataQuery`, and `useDataQueryMagic`
 
+### TypeScript
+
+```tsx
+// Type parameter `T` for the shape of returned `data`
+useDataQuery<T>(dataQueryKey, fetcher?, options?)
+
+// `MutatorInput` defines the shape of the argument passed to `mutate` and `onMutate` callback's parameter
+// `ReturnedData` defines the shape of the returned data
+// `Context` defines the shape of callbacks's parameter `onSuccess`, `onError`, and `onSettled`. `onMutate` callback should return the promise that resolve `Context` data type.
+useDataMutation<MutatorInput, ReturnedData, Context>(mutator, callbacks?)
+
+// Type parameter `T` for the shape of returned `data`. You DON'T NEED to define array type. Just need to define the shape of each item.
+// For example, if you pass Color type argument, it will return like Color[][]
+useInfiniteDataQuery<T>(dataQueryKey, fetcher, options);
+
+// Same as `useInfiniteDataQuery` Hook.
+useExperimentalInfiniteScrollDataQuery<T>(
+  dataQueryKey,
+  fetcher,
+  containerRef,
+  options
+);
+
+```
+
 #### `useDataQuery`
 
 A Hook to make developer's life easier. This Hook will help you in fetching data and keep you away from handling caches. You don't need to implement imperative stuffs. You can also use this Hook to manage state. Other Hooks, except `useDataMutation`, were built on top of this Hook.
@@ -127,6 +155,7 @@ const fetcher = (context) => fetch('url`).then(res => res.json());
 
 - `options` - to override the `options` received from `DataQueryProvider`. You can also pass callback functions such as `onSuccess`, `onError`, `onSettled`, and `onMutated`.
 
+  - `initialData`(v2.2.0) - initial data to return. It will be cached silently i.e other Hooks with same `dataQueryKey` will not be notified when it is being cached.
   - `onSuccess(data)` - which will be invoked when network request successfully completed.
   - `onError(reason)` - which will be invoked when network related error has occurred. All `onError` callbacks passed to library Hooks will not automatically be invoked on Server Error (HTTP statuses like `404`, `500`). You must explicitly throw it in your fetcher function.
 

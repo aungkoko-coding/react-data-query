@@ -12,26 +12,29 @@ import {
 
 export { FetcherType, ReasonType };
 
-type DefaultFunctionsType = {
+type DefaultFunctionsType<T> = {
   /**
    * Use to provide param for the next network request
    * @param lastPage
    * @param pages
    * @returns
    */
-  getNextPageParam?: (lastPage: any[], pages: any[]) => any | undefined;
+  getNextPageParam?: (lastPage: T, pages: T[]) => any | undefined;
   /**
    * Use to provide param for the next network request
    * @param firstPage
    * @param pages
    * @returns
    */
-  getPrevPageParam?: (firstPage: any[], pages: any[]) => any | undefined;
+  getPrevPageParam?: (firstPage: T, pages: T[]) => any | undefined;
   onReset?: (fetcher: (pageParams: any) => void) => void;
 };
 
-export type InfiniteDataQueryOptionsType = DefaultFunctionsType &
-  Omit<UseDataQueryOptionsType, "autoFetchEnabled" | "refetchOnWindowFocus">;
+export type InfiniteDataQueryOptionsType<T> = DefaultFunctionsType<T[] | []> &
+  Omit<
+    UseDataQueryOptionsType<Array<Array<T>> | []>,
+    "autoFetchEnabled" | "refetchOnWindowFocus"
+  >;
 
 /**
  * Fetch data infinitely. Unlike other Hooks, will not synchronize data across multiple Hooks with the same dataQueryKey
@@ -40,10 +43,10 @@ export type InfiniteDataQueryOptionsType = DefaultFunctionsType &
  * @param {*} options to override the functionalities
  * @returns infiniteDataQuery instance
  */
-export const useInfiniteDataQuery = (
+export const useInfiniteDataQuery = <T = any>(
   dataQueryKey: DataQueryKeyType,
   fetcher: FetcherType,
-  options: InfiniteDataQueryOptionsType
+  options: InfiniteDataQueryOptionsType<T>
 ) => {
   if (!dataQueryKey) {
     throw new TypeError(
@@ -57,7 +60,7 @@ export const useInfiniteDataQuery = (
 
   const { options: defaultOptions } = useDataQueryContext();
   const cacheKey = [dataQueryKey, "infinite"];
-  const [data, setData] = useState(
+  const [data, setData] = useState<[] | Array<Array<T>>>(
     stateInitializer({
       key: cacheKey,
       cacheTime: options.cacheTime ?? (defaultOptions.cacheTime as number), // 0 will also be considered
@@ -90,7 +93,7 @@ export const useInfiniteDataQuery = (
     );
   };
 
-  const setNecessaryStatus = (data: any) => {
+  const setNecessaryStatus = (data: T[][]) => {
     const nextPageParam =
       getNextPageParam && getNextPageParam(data[data.length - 1], data);
     const prevPageParam = getPrevPageParam && getPrevPageParam(data[0], data);
@@ -108,7 +111,7 @@ export const useInfiniteDataQuery = (
     ...options,
     autoFetchEnabled: false,
     refetchOnWindowFocus: false,
-    onSuccess: (d: any) => {
+    onSuccess: (d: T[]) => {
       clearCache(dataQueryKey);
       const newData = Array.from(data);
       newData.push(d);
@@ -130,7 +133,7 @@ export const useInfiniteDataQuery = (
         options.onError(err);
       }
     },
-    onMutated: (d: any) => {
+    onMutated: (d: T[]) => {
       clearCache(dataQueryKey);
       const newData = Array.from(data);
       newData.push(d);
@@ -151,7 +154,7 @@ export const useInfiniteDataQuery = (
   const { isFetching, isError, refetch } = useDataQuery(
     dataQueryKey,
     fetcher,
-    otherOptions
+    otherOptions as UseDataQueryOptionsType<T>
   );
   const queryMagic = useDataQueryMagic();
 
@@ -243,8 +246,10 @@ export const useInfiniteDataQuery = (
       ...status,
       hasNextPage:
         status.hasNextPage ||
-        (getNextPageParam &&
-          hasNext(getNextPageParam(data[data.length - 1], data))),
+        !!(
+          getNextPageParam &&
+          hasNext(getNextPageParam(data[data.length - 1], data))
+        ),
       hasPreviousPage:
         status.hasPreviousPage ||
         (getPrevPageParam && hasPrev(getPrevPageParam(data[0], data))),

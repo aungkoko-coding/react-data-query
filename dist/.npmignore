@@ -1,0 +1,20 @@
+# Files and folders to exclude from the npm package
+
+*.log
+*.test.*
+__tests__/
+test/
+tests/
+example/
+examples/
+demo/
+docs/
+build/
+node_modules/
+App.d.ts
+App.js
+main.d.ts
+main.js
+.npmignore
+.git*
+tsconfig.json

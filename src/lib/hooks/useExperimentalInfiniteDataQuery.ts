@@ -16,11 +16,11 @@ import { FetcherType } from "../types/Hooks.type";
  * @param {*} options to override the functionalities
  * @returns
  */
-export const useExperimentalInfiniteDataQuery = (
+export const useExperimentalInfiniteDataQuery = <T = any>(
   dataQueryKey: DataQueryKeyType,
   fetcher: FetcherType,
   containerRef: { current: HTMLElement },
-  options: InfiniteDataQueryOptionsType & { offsetBottom: number }
+  options: InfiniteDataQueryOptionsType<T> & { offsetBottom?: number }
 ) => {
   if (!dataQueryKey) {
     throw new TypeError(
@@ -58,7 +58,7 @@ export const useExperimentalInfiniteDataQuery = (
     isFetching,
     isFetchingNextPage,
     isLoading,
-  } = useInfiniteDataQuery(dataQueryKey, fetcher, {
+  } = useInfiniteDataQuery<T>(dataQueryKey, fetcher, {
     ...otherOptions,
     onSuccess: () => {
       operation.current.cancelOperation();

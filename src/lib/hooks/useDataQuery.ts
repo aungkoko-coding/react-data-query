@@ -8,6 +8,7 @@ import {
 } from "react";
 import {
   StateInitializerProps,
+  cacheData,
   staleTimeElapsed,
   stateInitializer,
 } from "../utils/cache-utils";
@@ -62,10 +63,10 @@ const statuses = status;
  * @param {*} options to override the functionalities
  * @returns data query instance
  */
-export const useDataQuery = (
+export const useDataQuery = <T = any>(
   dataQueryKey: DataQueryKeyType,
   fetcher: FetcherType,
-  options: UseDataQueryOptionsType = {}
+  options: UseDataQueryOptionsType<T> = {}
 ) => {
   if (typeof options !== "object")
     throw new TypeError("Please provide 'options' as an object!");
@@ -75,6 +76,7 @@ export const useDataQuery = (
   const { options: defaultOptions, notifyQueryChanges } = useDataQueryContext();
 
   const {
+    initialData = null,
     staleTime = defaultOptions.staleTime,
     cacheTime = defaultOptions.cacheTime,
     keepCacheAlways = defaultOptions.keepCacheAlways,
@@ -108,12 +110,14 @@ export const useDataQuery = (
       "Please provide markUpdatesAsTransitions as boolean type"
     );
 
-  const [data, setData] = useState(() =>
-    stateInitializer({
-      key: queryKey,
-      cacheTime,
-      keepCacheAlways,
-    } as StateInitializerProps)
+  const [data, setData] = useState<T | null | undefined>(
+    () =>
+      initialData ||
+      stateInitializer({
+        key: queryKey,
+        cacheTime,
+        keepCacheAlways,
+      } as StateInitializerProps)
   );
   const [error, setError] = useState<ReasonType>("");
 
@@ -127,14 +131,14 @@ export const useDataQuery = (
   const [status, setStatus] = useState(initialStatus);
 
   // I know this breaks the rule. When we read reactive values, we need to put them in dependencies list.
-  const memoizedOnSuccess = useCallback(onSuccess as OnSuccessFunType, [
+  const memoizedOnSuccess = useCallback(onSuccess as OnSuccessFunType<T>, [
     status,
   ]);
   const memoizedOnError = useCallback(onError as OnErrorFunType, [status]);
-  const memoizedOnSettled = useCallback(onSettled as OnSettledFunType, [
+  const memoizedOnSettled = useCallback(onSettled as OnSettledFunType<T>, [
     status,
   ]);
-  const memoizedOnMutated = useCallback(onMutated as OnMutatedFunType, [
+  const memoizedOnMutated = useCallback(onMutated as OnMutatedFunType<T>, [
     status,
   ]);
 
@@ -380,7 +384,7 @@ export const useDataQuery = (
    * Force refetch. Will invalidate the ongoing request and restart fetching i.e if there is already ongoing request, that request will be cancelled
    * @param {*} param  provide context to fetcher function
    */
-  function forceRefetch(param: any) {
+  function forceRefetch(param?: any) {
     // console.log("forced refetch");
 
     setStatus((prevStatus) => ({
@@ -504,6 +508,22 @@ export const useDataQuery = (
   //   keepValueOnKeyChanges,
   //   keepCacheAlways,
   // ]
+
+  useEffect(() => {
+    // Decide whether we should store initial data in cache
+    // If the data is already exists in the cache, I don't want to override it.
+    // But if it doesn't, cache the data and will not notify to other Hooks with the same dataQueryKey. That means it will cache the data in silent.
+    if (
+      !stateInitializer({
+        key: queryKey,
+        cacheTime,
+        keepCacheAlways,
+      } as StateInitializerProps) &&
+      initialData
+    ) {
+      cacheData({ key: queryKey, data: initialData });
+    }
+  }, []);
 
   useEffect(() => {
     const isInitialCall = metadata.current.isInitialCall;

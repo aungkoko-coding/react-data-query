@@ -1,5 +1,6 @@
 import { MutatorFunType } from "../types/Hooks.type";
-type DefaultOptionsType = {
+export { MutatorFunType };
+export type MutationCallbacksType = {
     onSuccess?: (data: any, context: any) => any;
     onError?: (err: Error, data: any, context: any) => any;
     onSettled?: (data: any, err: Error | null, context: any) => any;
@@ -11,11 +12,10 @@ type DefaultOptionsType = {
  * @param {*} callbacks an object that contains callback methods such as onSuccess, onError, onSettled and onMutate
  * @returns
  */
-export declare const useDataMutation: (mutator: MutatorFunType, callbacks: DefaultOptionsType) => {
+export declare const useDataMutation: (mutator: MutatorFunType, callbacks: MutationCallbacksType) => {
     data: any;
     isMutating: boolean;
     isError: boolean;
     error: Error | null;
     mutate: (newData: any) => Promise<void>;
 };
-export {};

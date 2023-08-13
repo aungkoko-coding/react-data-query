@@ -3,11 +3,19 @@ import { MutatorFunType } from "../types/Hooks.type";
 
 export { MutatorFunType };
 
-export type MutationCallbacksType = {
-  onSuccess?: (data: any, context: any) => any;
-  onError?: (err: Error, data: any, context: any) => any;
-  onSettled?: (data: any, err: Error | null, context: any) => any;
-  onMutate?: (newData: any) => Promise<any>;
+export type MutationCallbacksType<MutatorInput, ReturnedData, Context> = {
+  onSuccess?: (data: ReturnedData | null | undefined, context: Context) => void;
+  onError?: (
+    err: Error,
+    data: ReturnedData | null | undefined,
+    context: Context
+  ) => void;
+  onSettled?: (
+    data: ReturnedData | null | undefined,
+    err: Error | null,
+    context: Context
+  ) => void;
+  onMutate?: (newData: MutatorInput) => Promise<Context>;
 };
 
 /**
@@ -16,16 +24,20 @@ export type MutationCallbacksType = {
  * @param {*} callbacks an object that contains callback methods such as onSuccess, onError, onSettled and onMutate
  * @returns
  */
-export const useDataMutation = (
-  mutator: MutatorFunType,
-  callbacks: MutationCallbacksType
+export const useDataMutation = <
+  MutatorInput = any,
+  ReturnedData = any,
+  Context = any
+>(
+  mutator: MutatorFunType<ReturnedData>,
+  callbacks?: MutationCallbacksType<MutatorInput, ReturnedData, Context>
 ) => {
   const [isMutating, setIsMutating] = useState(false);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ReturnedData | null | undefined>(null);
 
-  const { onSuccess, onError, onSettled, onMutate } = callbacks;
+  const { onSuccess, onError, onSettled, onMutate } = callbacks || {};
 
   const mutate = async (newData: any) => {
     setIsMutating(true);
@@ -34,8 +46,8 @@ export const useDataMutation = (
     if (!isMutating) {
       let isError = false;
       let error: Error | null = null;
-      let context: any = {};
-      let data: any = null;
+      let context: Context = null as Context;
+      let data: ReturnedData | null = null;
 
       try {
         if (typeof onMutate === "function") {

@@ -24,20 +24,20 @@ export const useDataMutation = (mutator, callbacks) => {
                     context = await onMutate(newData);
                 }
                 data = await mutator(newData);
-                onSuccess && onSuccess(data, context);
+                typeof onSuccess === "function" && onSuccess(data, context);
             }
             catch (err) {
                 isError = true;
                 error = err;
-                onError && onError(error, newData, context);
+                typeof onError === "function" &&
+                    onError(error, newData, context);
             }
             finally {
-                console.log("finally", { isError });
                 setIsError(isError);
-                onError && setError(error);
+                setError(error);
                 setIsMutating(false);
                 setData(data);
-                onSettled && onSettled(newData, error, context);
+                typeof onSettled === "function" && onSettled(newData, error, context);
             }
         }
     };

@@ -1,5 +1,6 @@
 import { DataQueryKeyType } from "../context/ProviderTypes.type";
-type QuerySetterType = (prevData: any) => void | any;
+export type QuerySetterType = (prevData: any) => void | any;
+export { DataQueryKeyType };
 /**
  * Controls cache and network requests
  * @returns {Object} queryMagic instance
@@ -18,4 +19,3 @@ export declare const useDataQueryMagic: () => Readonly<{
     invalidateQuery: (dataQueryKey: DataQueryKeyType) => void;
     invalidateQueries: (dataQueryKeys: DataQueryKeyType[]) => void;
 }>;
-export {};
