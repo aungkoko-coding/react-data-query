@@ -1,21 +1,23 @@
 import { DataQueryKeyType, OptionsType } from "../context/ProviderTypes.type";
 export { DataQueryKeyType };
 export type ReasonType = Error | string | null;
-export type MutatorFunType = (newData: any) => Promise<any>;
+export type MutatorFunType<T> = (newData: T) => Promise<any>;
 export type Context = {
     dataQueryKey: DataQueryKeyType;
     param: any;
 };
 export type FetcherType = null | undefined | ((context: Context) => Promise<any>);
-export type OnSuccessFunType = (data: any) => void;
+export type OnSuccessFunType<T> = (data: T) => void;
 export type OnErrorFunType = (err: ReasonType) => void;
-export type OnSettledFunType = (data: any, reason: ReasonType) => void;
-export type OnMutatedFunType = (data: any) => void;
-export type UseDataQueryOptionsType = Omit<OptionsType, "offsetBottom"> & {
-    onSuccess?: OnSuccessFunType;
+export type OnSettledFunType<T> = (data: T, reason: ReasonType) => void;
+export type OnMutatedFunType<T> = (data: T) => void;
+export type UseDataQueryOptionsType<T> = Omit<OptionsType, "offsetBottom"> & {
+    initialData?: T;
+} & {
+    onSuccess?: OnSuccessFunType<T>;
     onError?: OnErrorFunType;
-    onSettled?: OnSettledFunType;
-    onMutated?: OnMutatedFunType;
+    onSettled?: OnSettledFunType<T>;
+    onMutated?: OnMutatedFunType<T>;
 };
 export type MetadataType = {
     isInitialCall: boolean;

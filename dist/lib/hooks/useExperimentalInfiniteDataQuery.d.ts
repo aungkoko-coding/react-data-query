@@ -9,15 +9,19 @@ import { FetcherType } from "../types/Hooks.type";
  * @param {*} options to override the functionalities
  * @returns
  */
-export declare const useExperimentalInfiniteDataQuery: (dataQueryKey: DataQueryKeyType, fetcher: FetcherType, containerRef: {
+export declare const useExperimentalInfiniteDataQuery: <T = any>(dataQueryKey: DataQueryKeyType, fetcher: FetcherType, containerRef: {
     current: HTMLElement;
-}, options: InfiniteDataQueryOptionsType & {
-    offsetBottom: number;
+}, options: {
+    getNextPageParam?: ((lastPage: [] | T[], pages: ([] | T[])[]) => any) | undefined;
+    getPrevPageParam?: ((firstPage: [] | T[], pages: ([] | T[])[]) => any) | undefined;
+    onReset?: ((fetcher: (pageParams: any) => void) => void) | undefined;
+} & Omit<import("../types/Hooks.type").UseDataQueryOptionsType<[] | T[][]>, "autoFetchEnabled" | "refetchOnWindowFocus"> & {
+    offsetBottom?: number | undefined;
 }) => Readonly<{
-    data: any;
+    data: [] | T[][];
     reset: () => void;
     fetchPage: (pageParam: any) => void;
-    hasNextPage: boolean | undefined;
+    hasNextPage: boolean;
     isLoading: boolean;
     isFetching: boolean;
     isFetchingNextPage: boolean;

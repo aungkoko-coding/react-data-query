@@ -175,7 +175,7 @@ export const useInfiniteDataQuery = (dataQueryKey, fetcher, options) => {
         ...{
             ...status,
             hasNextPage: status.hasNextPage ||
-                (getNextPageParam &&
+                !!(getNextPageParam &&
                     hasNext(getNextPageParam(data[data.length - 1], data))),
             hasPreviousPage: status.hasPreviousPage ||
                 (getPrevPageParam && hasPrev(getPrevPageParam(data[0], data))),

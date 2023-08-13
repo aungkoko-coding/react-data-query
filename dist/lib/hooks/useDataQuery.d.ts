@@ -10,14 +10,14 @@ export { Context, DataQueryKeyType, FetcherType, UseDataQueryOptionsType, OnErro
  * @param {*} options to override the functionalities
  * @returns data query instance
  */
-export declare const useDataQuery: (dataQueryKey: DataQueryKeyType, fetcher: FetcherType, options?: UseDataQueryOptionsType) => Readonly<{
+export declare const useDataQuery: <T = any>(dataQueryKey: DataQueryKeyType, fetcher: FetcherType, options?: UseDataQueryOptionsType<T>) => Readonly<{
     dataQueryKey: DataQueryKeyType;
-    data: any;
+    data: T | null | undefined;
     isFetching: boolean;
     isLoading: boolean;
     isError: boolean;
     isStale: boolean;
     error: ReasonType;
     refetch: (param?: any) => void;
-    forceRefetch: (param: any) => void;
+    forceRefetch: (param?: any) => void;
 }>;

@@ -1,10 +1,10 @@
 import { MutatorFunType } from "../types/Hooks.type";
 export { MutatorFunType };
-export type MutationCallbacksType = {
-    onSuccess?: (data: any, context: any) => any;
-    onError?: (err: Error, data: any, context: any) => any;
-    onSettled?: (data: any, err: Error | null, context: any) => any;
-    onMutate?: (newData: any) => Promise<any>;
+export type MutationCallbacksType<MutatorInput, ReturnedData, Context> = {
+    onSuccess?: (data: ReturnedData | null | undefined, context: Context) => void;
+    onError?: (err: Error, data: ReturnedData | null | undefined, context: Context) => void;
+    onSettled?: (data: ReturnedData | null | undefined, err: Error | null, context: Context) => void;
+    onMutate?: (newData: MutatorInput) => Promise<Context>;
 };
 /**
  * Use to mutate remote data and will not cache
@@ -12,8 +12,8 @@ export type MutationCallbacksType = {
  * @param {*} callbacks an object that contains callback methods such as onSuccess, onError, onSettled and onMutate
  * @returns
  */
-export declare const useDataMutation: (mutator: MutatorFunType, callbacks: MutationCallbacksType) => {
-    data: any;
+export declare const useDataMutation: <MutatorInput = any, ReturnedData = any, Context = any>(mutator: MutatorFunType<ReturnedData>, callbacks?: MutationCallbacksType<MutatorInput, ReturnedData, Context> | undefined) => {
+    data: ReturnedData | null | undefined;
     isMutating: boolean;
     isError: boolean;
     error: Error | null;

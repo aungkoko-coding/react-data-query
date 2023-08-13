@@ -10,14 +10,14 @@ export const useDataMutation = (mutator, callbacks) => {
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
-    const { onSuccess, onError, onSettled, onMutate } = callbacks;
+    const { onSuccess, onError, onSettled, onMutate } = callbacks || {};
     const mutate = async (newData) => {
         setIsMutating(true);
         setIsError(false);
         if (!isMutating) {
             let isError = false;
             let error = null;
-            let context = {};
+            let context = null;
             let data = null;
             try {
                 if (typeof onMutate === "function") {

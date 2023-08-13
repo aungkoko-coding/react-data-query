@@ -1,5 +1,5 @@
 import { startTransition, useCallback, useEffect, useMemo, useRef, useState, } from "react";
-import { staleTimeElapsed, stateInitializer, } from "../utils/cache-utils";
+import { cacheData, staleTimeElapsed, stateInitializer, } from "../utils/cache-utils";
 import { getQueryKeyAsArray, getRaceHelper, getRandomID, status, } from "../utils/utils";
 import { useDataQueryContext } from "../context/DataQueryProvider";
 import { addToOngoingRequestQueue, isInOngoingRequestQueue, removeFromOngoingRequestQueue, unsubscribeChanges, subscribeChanges, isActualOngoingRequest, } from "../utils/queue-utils";
@@ -19,7 +19,7 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
     const queryKey = dataQueryKey.toString();
     const hookID = useMemo(getRandomID, []);
     const { options: defaultOptions, notifyQueryChanges } = useDataQueryContext();
-    const { staleTime = defaultOptions.staleTime, cacheTime = defaultOptions.cacheTime, keepCacheAlways = defaultOptions.keepCacheAlways, keepValueOnKeyChanges = defaultOptions.keepValueOnKeyChanges, dataStayInSync = defaultOptions.dataStayInSync, autoFetchEnabled = defaultOptions.autoFetchEnabled, refetchOnWindowFocus = defaultOptions.refetchOnWindowFocus, markUpdatesAsTransitions = defaultOptions.markUpdatesAsTransitions, onSuccess = null, onError = null, onSettled = null, onMutated = null, } = options;
+    const { initialData = null, staleTime = defaultOptions.staleTime, cacheTime = defaultOptions.cacheTime, keepCacheAlways = defaultOptions.keepCacheAlways, keepValueOnKeyChanges = defaultOptions.keepValueOnKeyChanges, dataStayInSync = defaultOptions.dataStayInSync, autoFetchEnabled = defaultOptions.autoFetchEnabled, refetchOnWindowFocus = defaultOptions.refetchOnWindowFocus, markUpdatesAsTransitions = defaultOptions.markUpdatesAsTransitions, onSuccess = null, onError = null, onSettled = null, onMutated = null, } = options;
     if (typeof staleTime !== "number")
         throw new TypeError("Please provide staleTime as number type");
     if (typeof cacheTime !== "number")
@@ -36,11 +36,12 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
         throw new TypeError("Please provide refetchOnWindowFocus as boolean type");
     if (typeof markUpdatesAsTransitions !== "boolean")
         throw new TypeError("Please provide markUpdatesAsTransitions as boolean type");
-    const [data, setData] = useState(() => stateInitializer({
-        key: queryKey,
-        cacheTime,
-        keepCacheAlways,
-    }));
+    const [data, setData] = useState(() => initialData ||
+        stateInitializer({
+            key: queryKey,
+            cacheTime,
+            keepCacheAlways,
+        }));
     const [error, setError] = useState("");
     const initialStatus = {
         isFetching: autoFetchEnabled,
@@ -381,6 +382,19 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
     //   keepValueOnKeyChanges,
     //   keepCacheAlways,
     // ]
+    useEffect(() => {
+        // Decide whether we should store initial data in cache
+        // If the data is already exists in the cache, I don't want to override it.
+        // But if it doesn't, cache the data and will not notify to other Hooks with the same dataQueryKey. That means it will cache the data in silent.
+        if (!stateInitializer({
+            key: queryKey,
+            cacheTime,
+            keepCacheAlways,
+        }) &&
+            initialData) {
+            cacheData({ key: queryKey, data: initialData });
+        }
+    }, []);
     useEffect(() => {
         const isInitialCall = metadata.current.isInitialCall;
         if (typeof window !== undefined) {
