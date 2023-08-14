@@ -110,15 +110,15 @@ export const useDataQuery = <T = any>(
       "Please provide markUpdatesAsTransitions as boolean type"
     );
 
-  const [data, setData] = useState<T | null | undefined>(
-    () =>
-      initialData ||
-      stateInitializer({
-        key: queryKey,
-        cacheTime,
-        keepCacheAlways,
-      } as StateInitializerProps)
-  );
+  const [data, setData] = useState<T | null | undefined>(() => {
+    const initialState = stateInitializer({
+      key: queryKey,
+      cacheTime,
+      keepCacheAlways,
+    } as StateInitializerProps);
+
+    return initialState != null ? initialState : initialData;
+  });
   const [error, setError] = useState<ReasonType>("");
 
   const initialStatus = {

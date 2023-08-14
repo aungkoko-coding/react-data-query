@@ -155,7 +155,7 @@ const fetcher = (context) => fetch('url`).then(res => res.json());
 
 - `options` - to override the `options` received from `DataQueryProvider`. You can also pass callback functions such as `onSuccess`, `onError`, `onSettled`, and `onMutated`.
 
-  - `initialData`(v2.2.0) - initial data to return. It will be cached silently i.e other Hooks with same `dataQueryKey` will not be notified when it is being cached.
+  - `initialData`(v2.2.0) - initial data to return. It will be cached silently i.e other Hooks with same `dataQueryKey` will not be notified when it is being cached. Please note that if the data with the same `dataQueryKey` already exists in the cache, that cached data will return instead of `initialData`.
   - `onSuccess(data)` - which will be invoked when network request successfully completed.
   - `onError(reason)` - which will be invoked when network related error has occurred. All `onError` callbacks passed to library Hooks will not automatically be invoked on Server Error (HTTP statuses like `404`, `500`). You must explicitly throw it in your fetcher function.
 

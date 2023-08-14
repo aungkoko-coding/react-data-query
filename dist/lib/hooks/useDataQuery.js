@@ -36,12 +36,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
         throw new TypeError("Please provide refetchOnWindowFocus as boolean type");
     if (typeof markUpdatesAsTransitions !== "boolean")
         throw new TypeError("Please provide markUpdatesAsTransitions as boolean type");
-    const [data, setData] = useState(() => initialData ||
-        stateInitializer({
+    const [data, setData] = useState(() => {
+        const initialState = stateInitializer({
             key: queryKey,
             cacheTime,
             keepCacheAlways,
-        }));
+        });
+        return initialState != null ? initialState : initialData;
+    });
     const [error, setError] = useState("");
     const initialStatus = {
         isFetching: autoFetchEnabled,
