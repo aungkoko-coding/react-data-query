@@ -159,7 +159,6 @@ export const useDataQuery = <T = any>(
    */
   const onCancelQuery = useCallback(() => {
     if (isFetching) {
-      // console.log("cancelled status");
       setStatus((s) => ({
         ...s,
         isLoading: false,
@@ -216,7 +215,6 @@ export const useDataQuery = <T = any>(
         staleTime as number,
         metadata.current.beforeStaleTime
       );
-      // console.log("Callback invoked", { isStale1 });
       if (
         isFetching || // If I don't put this, the new data will not received whenever the query key changed or refetch
         ((isStale || isStale1) && dataStayInSync) ||
@@ -267,7 +265,6 @@ export const useDataQuery = <T = any>(
           typeof memoizedOnSettled === "function" &&
             memoizedOnSettled(resData, reason);
         } else if (status === statuses.fail) {
-          // console.log("fail");
           // When network request fails, if the user is doing computative intensive task, will block the user from interacting
           setStatus((s) => ({
             ...s,
@@ -281,12 +278,10 @@ export const useDataQuery = <T = any>(
           typeof memoizedOnError === "function" && memoizedOnError(reason);
           typeof memoizedOnSettled === "function" &&
             memoizedOnSettled(resData, reason);
-          return; // Notice this return statement. If the status is fail, we don't need to set data state below
+          return;
         }
-        // This will set fresh data, so we need to reset beforeStaleTime
+        // When we get fresh data, we need to reset beforeStaleTime
         metadata.current.beforeStaleTime = Date.now();
-        // setError("");
-        // setData(resData);
       }
     },
     [
@@ -318,7 +313,7 @@ export const useDataQuery = <T = any>(
   }, [onQueryChanges, queryKey, hookID, onInvalidate, onCancelQuery]);
 
   /**
-   *Function to initiate network request by calling user provided fetcher function
+   * Function to initiate network request by calling user provided fetcher function
    * @param {string} queryKey
    * @param {*} params
    */
@@ -328,12 +323,8 @@ export const useDataQuery = <T = any>(
     }
 
     clearTimeout(metadata.current.staleTimeOutId);
-    if (isInOngoingRequestQueue(queryKey)) {
-      // console.log("data is already in queue", { queryKey });
-      return;
-    }
 
-    // console.log("running fetcher");
+    if (isInOngoingRequestQueue(queryKey)) return;
 
     const requestID = getRandomID();
     addToOngoingRequestQueue(queryKey, requestID);
@@ -342,14 +333,10 @@ export const useDataQuery = <T = any>(
       .then((response) => {
         // Will notify changes if this network request is still active and in ongoing queue
         // If we don't prevent this, there will be race conditions.
-
-        //console.log({ response });
         if (
           operation.current.isActiveOperation(queryKey) &&
           isActualOngoingRequest(queryKey, requestID)
         ) {
-          // console.log("receiving response", queryKey);
-
           if (typeof notifyQueryChanges === "function") {
             notifyQueryChanges({
               dataQueryKey: queryKey,
@@ -363,7 +350,6 @@ export const useDataQuery = <T = any>(
         }
       })
       .catch((err) => {
-        // console.log("error occur", { err });
         operation.current.cancelOperation();
         if (err.name === "AbortError") {
           console.log("Fetch aborted");
@@ -455,7 +441,6 @@ export const useDataQuery = <T = any>(
 
   useEffect(() => {
     metadata.current.staleTimeOutId = setTimeout(() => {
-      // console.log("stale");
       setStatus((prevStatus) => ({ ...prevStatus, isStale: true }));
     }, staleTime);
 
@@ -473,7 +458,6 @@ export const useDataQuery = <T = any>(
       !metadata.current.isInitialCall &&
       autoFetchEnabled // Even if the query key was changed, the new network request will not be initiated if we've disabled autoFetchEnable
     ) {
-      // console.log("query key changed");
       setStatus((prevStatus) => ({
         ...prevStatus,
         isLoading: !keepValueOnKeyChanges,
@@ -500,14 +484,6 @@ export const useDataQuery = <T = any>(
       fetchData(queryKey, { dataQueryKey: getQueryKeyAsArray(queryKey) });
     }
   });
-  //  [
-  //   queryKey,
-  //   cacheTime,
-  //   autoFetchEnabled,
-  //   fetchData,
-  //   keepValueOnKeyChanges,
-  //   keepCacheAlways,
-  // ]
 
   useEffect(() => {
     // Decide whether we should store initial data in cache
@@ -527,8 +503,7 @@ export const useDataQuery = <T = any>(
 
   useEffect(() => {
     const isInitialCall = metadata.current.isInitialCall;
-    if (typeof window !== undefined) {
-      // console.log("running effect");
+    if (typeof window !== "undefined") {
       if (!autoFetchEnabled) {
         if (isInitialCall) {
           metadata.current.isInitialCall = false;
