@@ -56,6 +56,7 @@ export const useExperimentalInfiniteDataQuery = <T = any>(
     fetchNextPage,
     hasNextPage,
     isFetching,
+    isSuccess,
     isFetchingNextPage,
     isLoading,
   } = useInfiniteDataQuery<T>(dataQueryKey, fetcher, {
@@ -78,10 +79,6 @@ export const useExperimentalInfiniteDataQuery = <T = any>(
       let triggerHeight =
         container.scrollTop + (offsetBottom || 0) + container.offsetHeight;
 
-      // console.log(
-      //   "scrolling...",
-      //   operation.current.isActiveOperation(dataQueryKey.toString())
-      // );
       // Need to prevent in situation where user scroll top and bottom repeatedly before data arrives
       if (!operation.current.isActiveOperation(dataQueryKeyStr)) {
         if (triggerHeight >= container.scrollHeight) {
@@ -105,6 +102,7 @@ export const useExperimentalInfiniteDataQuery = <T = any>(
     hasNextPage,
     isLoading,
     isFetching,
+    isSuccess,
     isFetchingNextPage,
   });
 };

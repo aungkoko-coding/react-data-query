@@ -182,6 +182,7 @@ Read only query instance object whose properties are :
 | `error` | `any` | The reason why error occurred |
 | `isLoading` | `boolean` | Indicating whether the data is being fetched. `true` for only first time network request. But if you have disabled `keepValueOnKeyChanges`, this will be set to true if there is no cache for new `dataQueryKey`. |
 | `isFetching` | `boolean` | Indicating whether the data is being fetched. This will always be `true` on every network requests. |
+| `isSuccess` | `boolean` | Indicating whether the data is successfully fetched. |
 | `isError` | `boolean` | Indicating whether the network related error has occurred. |
 | `isStale` | `boolean` | Indicating whether the data becomes stale or not. The component will be re-rendered when the data becomes stale. |
 |`refetch` | `function` | A function to manually fetch data. When you call this function, the new network request will be initiated only if there is no already ongoing request with the same `dataQueryKey`. When the data becomes available, the Hook will be notified with new data and update the `data` state with that new data. |

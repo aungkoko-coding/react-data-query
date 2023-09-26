@@ -25,7 +25,7 @@ export const useExperimentalInfiniteDataQuery = (dataQueryKey, fetcher, containe
     if ((offsetBottom && offsetBottom < 0) || Number.isNaN(offsetBottom))
         throw new TypeError("'offsetBottom' options must be number type which is greater than or equal to zero");
     const operation = useRef(getRaceHelper());
-    const { data, reset, fetchPage, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, isLoading, } = useInfiniteDataQuery(dataQueryKey, fetcher, {
+    const { data, reset, fetchPage, fetchNextPage, hasNextPage, isFetching, isSuccess, isFetchingNextPage, isLoading, } = useInfiniteDataQuery(dataQueryKey, fetcher, {
         ...otherOptions,
         onSuccess: () => {
             operation.current.cancelOperation();
@@ -40,10 +40,6 @@ export const useExperimentalInfiniteDataQuery = (dataQueryKey, fetcher, containe
         container.addEventListener("scroll", handleScroll);
         function handleScroll() {
             let triggerHeight = container.scrollTop + (offsetBottom || 0) + container.offsetHeight;
-            // console.log(
-            //   "scrolling...",
-            //   operation.current.isActiveOperation(dataQueryKey.toString())
-            // );
             // Need to prevent in situation where user scroll top and bottom repeatedly before data arrives
             if (!operation.current.isActiveOperation(dataQueryKeyStr)) {
                 if (triggerHeight >= container.scrollHeight) {
@@ -65,6 +61,7 @@ export const useExperimentalInfiniteDataQuery = (dataQueryKey, fetcher, containe
         hasNextPage,
         isLoading,
         isFetching,
+        isSuccess,
         isFetchingNextPage,
     });
 };

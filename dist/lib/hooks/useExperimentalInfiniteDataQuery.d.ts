@@ -24,5 +24,6 @@ export declare const useExperimentalInfiniteDataQuery: <T = any>(dataQueryKey: D
     hasNextPage: boolean;
     isLoading: boolean;
     isFetching: boolean;
+    isSuccess: boolean;
     isFetchingNextPage: boolean;
 }>;

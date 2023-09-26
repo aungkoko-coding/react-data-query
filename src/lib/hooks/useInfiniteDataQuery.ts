@@ -151,7 +151,7 @@ export const useInfiniteDataQuery = <T = any>(
 
   const { getNextPageParam, getPrevPageParam, onReset, ...otherOptions } =
     filteredOptions;
-  const { isFetching, isError, refetch } = useDataQuery(
+  const { isFetching, isError, isSuccess, refetch } = useDataQuery(
     dataQueryKey,
     fetcher,
     otherOptions as UseDataQueryOptionsType<T>
@@ -256,6 +256,7 @@ export const useInfiniteDataQuery = <T = any>(
     },
     isError,
     isFetching,
+    isSuccess,
     fetchPage,
     fetchNextPage,
     fetchPrevPage,

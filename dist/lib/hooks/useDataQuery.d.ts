@@ -15,6 +15,7 @@ export declare const useDataQuery: <T = any>(dataQueryKey: DataQueryKeyType, fet
     data: T | null | undefined;
     isFetching: boolean;
     isLoading: boolean;
+    isSuccess: boolean;
     isError: boolean;
     isStale: boolean;
     error: ReasonType;

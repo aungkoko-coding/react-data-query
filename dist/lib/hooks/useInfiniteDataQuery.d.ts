@@ -29,6 +29,7 @@ export type InfiniteDataQueryOptionsType<T> = DefaultFunctionsType<T[] | []> & O
 export declare const useInfiniteDataQuery: <T = any>(dataQueryKey: DataQueryKeyType, fetcher: FetcherType, options: InfiniteDataQueryOptionsType<T>) => Readonly<{
     isError: boolean;
     isFetching: boolean;
+    isSuccess: boolean;
     fetchPage: (pageParam: any) => void;
     fetchNextPage: () => void;
     fetchPrevPage: () => void;

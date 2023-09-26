@@ -48,6 +48,7 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
     const initialStatus = {
         isFetching: autoFetchEnabled,
         isLoading: autoFetchEnabled && !data,
+        isSuccess: false,
         isInvalidating: false,
         isError: false,
         isStale: false,
@@ -78,14 +79,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
      */
     const onCancelQuery = useCallback(() => {
         if (isFetching) {
-            setStatus((s) => ({
-                ...s,
+            setStatus({
                 isLoading: false,
                 isFetching: false,
+                isSuccess: false,
                 isInvalidating: false,
                 isStale: false,
                 isError: false,
-            }));
+            });
         }
         operation.current.cancelOperation();
     }, [isFetching]);
@@ -93,29 +94,23 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
      *Will be registered as a callback to notify invalidation. Invalidate the data query i.e trigger new network request to get fresh data. When there is already ongoing network request, will wait for it.
      */
     const onInvalidate = useCallback(() => {
+        const newStatus = {
+            isLoading: false,
+            isFetching: true,
+            isSuccess: false,
+            isInvalidating: true,
+            isStale: false,
+            isError: false,
+        };
         if (markUpdatesAsTransitions) {
             // console.log("mark as transition");
             startTransition(() => {
-                setStatus((prevStatus) => ({
-                    ...prevStatus,
-                    isLoading: false,
-                    isFetching: true,
-                    isInvalidating: true,
-                    isStale: false,
-                    isError: false,
-                }));
+                setStatus(newStatus);
                 setError("");
             });
         }
         else {
-            setStatus((prevStatus) => ({
-                ...prevStatus,
-                isLoading: false,
-                isFetching: true,
-                isInvalidating: true,
-                isStale: false,
-                isError: false,
-            }));
+            setStatus(newStatus);
             setError("");
         }
     }, [markUpdatesAsTransitions]);
@@ -148,29 +143,23 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
                 typeof memoizedOnMutated === "function" && memoizedOnMutated(resData);
             }
             else if (status === statuses.success) {
+                const newStatus = {
+                    isLoading: false,
+                    isFetching: false,
+                    isSuccess: true,
+                    isInvalidating: false,
+                    isStale: false,
+                    isError: false,
+                };
                 if (markUpdatesAsTransitions) {
                     startTransition(() => {
-                        setStatus((s) => ({
-                            ...s,
-                            isLoading: false,
-                            isFetching: false,
-                            isInvalidating: false,
-                            isStale: false,
-                            isError: false,
-                        }));
+                        setStatus(newStatus);
                         setError("");
                         setData(resData);
                     });
                 }
                 else {
-                    setStatus((s) => ({
-                        ...s,
-                        isLoading: false,
-                        isFetching: false,
-                        isInvalidating: false,
-                        isStale: false,
-                        isError: false,
-                    }));
+                    setStatus(newStatus);
                     setError("");
                     setData(resData);
                 }
@@ -180,14 +169,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
             }
             else if (status === statuses.fail) {
                 // When network request fails, if the user is doing computative intensive task, will block the user from interacting
-                setStatus((s) => ({
-                    ...s,
+                setStatus({
                     isStale: isStale1 || isStale,
                     isLoading: false,
+                    isSuccess: false,
                     isFetching: false,
                     isInvalidating: false,
                     isError: true,
-                }));
+                });
                 setError(reason);
                 typeof memoizedOnError === "function" && memoizedOnError(reason);
                 typeof memoizedOnSettled === "function" &&
@@ -268,14 +257,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
      * @param {*} param  provide context to fetcher function
      */
     function forceRefetch(param) {
-        // console.log("forced refetch");
-        setStatus((prevStatus) => ({
-            ...prevStatus,
+        setStatus({
             isLoading: false,
             isFetching: true,
+            isSuccess: false,
+            isInvalidating: false,
             isStale: false,
             isError: false,
-        }));
+        });
         setError("");
         // When we need to force refetch, we need to remove from ongoing request queue
         removeFromOngoingRequestQueue(queryKey);
@@ -289,13 +278,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
      */
     function refetch(param) {
         // console.log("refetch", { param });
-        setStatus((prevStatus) => ({
-            ...prevStatus,
+        setStatus({
             isLoading: false,
             isFetching: true,
+            isSuccess: false,
+            isInvalidating: false,
             isStale: false,
             isError: false,
-        }));
+        });
         setError("");
         fetchData(queryKey, { dataQueryKey, param });
     }
@@ -305,7 +295,6 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
         const handleFocus = () => {
             if (!isWindowFocused.current) {
                 if (refetchOnWindowFocus) {
-                    // console.log("refetch on window focus");
                     refetch();
                 }
             }
@@ -341,14 +330,14 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
             !metadata.current.isInitialCall &&
             autoFetchEnabled // Even if the query key was changed, the new network request will not be initiated if we've disabled autoFetchEnable
         ) {
-            setStatus((prevStatus) => ({
-                ...prevStatus,
+            setStatus({
                 isLoading: !keepValueOnKeyChanges,
                 isFetching: true,
+                isSuccess: false,
                 isStale: false,
                 isError: false,
                 isInvalidating: false,
-            }));
+            });
             // we need to cancel previous fetch operation, because queryKey was changed.
             // we need to start new fetch operation
             operation.current.cancelOperation();
@@ -404,6 +393,7 @@ export const useDataQuery = (dataQueryKey, fetcher, options = {}) => {
         data,
         isFetching: status.isFetching,
         isLoading: status.isLoading && !data,
+        isSuccess: status.isSuccess,
         isError: status.isError,
         isStale: status.isStale,
         error,

@@ -124,6 +124,7 @@ export const useDataQuery = <T = any>(
   const initialStatus = {
     isFetching: autoFetchEnabled,
     isLoading: autoFetchEnabled && !data,
+    isSuccess: false,
     isInvalidating: false,
     isError: false,
     isStale: false,
@@ -159,14 +160,14 @@ export const useDataQuery = <T = any>(
    */
   const onCancelQuery = useCallback(() => {
     if (isFetching) {
-      setStatus((s) => ({
-        ...s,
+      setStatus({
         isLoading: false,
         isFetching: false,
+        isSuccess: false,
         isInvalidating: false,
         isStale: false,
         isError: false,
-      }));
+      });
     }
     operation.current.cancelOperation();
   }, [isFetching]);
@@ -175,28 +176,22 @@ export const useDataQuery = <T = any>(
    *Will be registered as a callback to notify invalidation. Invalidate the data query i.e trigger new network request to get fresh data. When there is already ongoing network request, will wait for it.
    */
   const onInvalidate = useCallback(() => {
+    const newStatus = {
+      isLoading: false,
+      isFetching: true,
+      isSuccess: false,
+      isInvalidating: true, // by setting true, the data will be refetched. See Effect logic below
+      isStale: false,
+      isError: false,
+    };
     if (markUpdatesAsTransitions) {
       // console.log("mark as transition");
       startTransition(() => {
-        setStatus((prevStatus) => ({
-          ...prevStatus,
-          isLoading: false,
-          isFetching: true,
-          isInvalidating: true, // by setting true, the data will be refetched. See Effect logic below
-          isStale: false,
-          isError: false,
-        }));
+        setStatus(newStatus);
         setError("");
       });
     } else {
-      setStatus((prevStatus) => ({
-        ...prevStatus,
-        isLoading: false,
-        isFetching: true,
-        isInvalidating: true, // by setting true, the data will be refetched. See Effect logic below
-        isStale: false,
-        isError: false,
-      }));
+      setStatus(newStatus);
       setError("");
     }
   }, [markUpdatesAsTransitions]);
@@ -235,28 +230,22 @@ export const useDataQuery = <T = any>(
 
           typeof memoizedOnMutated === "function" && memoizedOnMutated(resData);
         } else if (status === statuses.success) {
+          const newStatus = {
+            isLoading: false,
+            isFetching: false,
+            isSuccess: true,
+            isInvalidating: false,
+            isStale: false,
+            isError: false,
+          };
           if (markUpdatesAsTransitions) {
             startTransition(() => {
-              setStatus((s) => ({
-                ...s,
-                isLoading: false,
-                isFetching: false,
-                isInvalidating: false,
-                isStale: false,
-                isError: false,
-              }));
+              setStatus(newStatus);
               setError("");
               setData(resData);
             });
           } else {
-            setStatus((s) => ({
-              ...s,
-              isLoading: false,
-              isFetching: false,
-              isInvalidating: false,
-              isStale: false,
-              isError: false,
-            }));
+            setStatus(newStatus);
             setError("");
             setData(resData);
           }
@@ -266,14 +255,14 @@ export const useDataQuery = <T = any>(
             memoizedOnSettled(resData, reason);
         } else if (status === statuses.fail) {
           // When network request fails, if the user is doing computative intensive task, will block the user from interacting
-          setStatus((s) => ({
-            ...s,
+          setStatus({
             isStale: isStale1 || isStale,
             isLoading: false,
+            isSuccess: false,
             isFetching: false,
             isInvalidating: false,
             isError: true,
-          }));
+          });
           setError(reason);
           typeof memoizedOnError === "function" && memoizedOnError(reason);
           typeof memoizedOnSettled === "function" &&
@@ -371,15 +360,14 @@ export const useDataQuery = <T = any>(
    * @param {*} param  provide context to fetcher function
    */
   function forceRefetch(param?: any) {
-    // console.log("forced refetch");
-
-    setStatus((prevStatus) => ({
-      ...prevStatus,
+    setStatus({
       isLoading: false,
       isFetching: true,
+      isSuccess: false,
+      isInvalidating: false,
       isStale: false,
       isError: false,
-    }));
+    });
     setError("");
 
     // When we need to force refetch, we need to remove from ongoing request queue
@@ -395,13 +383,14 @@ export const useDataQuery = <T = any>(
    */
   function refetch(param?: any) {
     // console.log("refetch", { param });
-    setStatus((prevStatus) => ({
-      ...prevStatus,
+    setStatus({
       isLoading: false,
       isFetching: true,
+      isSuccess: false,
+      isInvalidating: false,
       isStale: false,
       isError: false,
-    }));
+    });
     setError("");
 
     fetchData(queryKey, { dataQueryKey, param });
@@ -415,7 +404,6 @@ export const useDataQuery = <T = any>(
     const handleFocus = () => {
       if (!isWindowFocused.current) {
         if (refetchOnWindowFocus) {
-          // console.log("refetch on window focus");
           refetch();
         }
       }
@@ -458,14 +446,14 @@ export const useDataQuery = <T = any>(
       !metadata.current.isInitialCall &&
       autoFetchEnabled // Even if the query key was changed, the new network request will not be initiated if we've disabled autoFetchEnable
     ) {
-      setStatus((prevStatus) => ({
-        ...prevStatus,
+      setStatus({
         isLoading: !keepValueOnKeyChanges,
         isFetching: true,
+        isSuccess: false,
         isStale: false,
         isError: false,
         isInvalidating: false,
-      }));
+      });
 
       // we need to cancel previous fetch operation, because queryKey was changed.
       // we need to start new fetch operation
@@ -535,6 +523,7 @@ export const useDataQuery = <T = any>(
     data,
     isFetching: status.isFetching,
     isLoading: status.isLoading && !data,
+    isSuccess: status.isSuccess,
     isError: status.isError,
     isStale: status.isStale,
     error,

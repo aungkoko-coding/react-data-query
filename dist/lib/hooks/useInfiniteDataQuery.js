@@ -96,7 +96,7 @@ export const useInfiniteDataQuery = (dataQueryKey, fetcher, options) => {
         },
     };
     const { getNextPageParam, getPrevPageParam, onReset, ...otherOptions } = filteredOptions;
-    const { isFetching, isError, refetch } = useDataQuery(dataQueryKey, fetcher, otherOptions);
+    const { isFetching, isError, isSuccess, refetch } = useDataQuery(dataQueryKey, fetcher, otherOptions);
     const queryMagic = useDataQueryMagic();
     if (getNextPageParam && typeof getNextPageParam !== "function")
         throw new TypeError("Please provide getNextPageParam as a function");
@@ -182,6 +182,7 @@ export const useInfiniteDataQuery = (dataQueryKey, fetcher, options) => {
         },
         isError,
         isFetching,
+        isSuccess,
         fetchPage,
         fetchNextPage,
         fetchPrevPage,
