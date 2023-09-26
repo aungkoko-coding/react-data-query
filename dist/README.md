@@ -22,6 +22,7 @@ Client side asynchronous remote state management library. Library's syntaxes and
 - `2.1.4` integrated with TypeScript.
 - From `2.1.9`, you can import TypeScript types.
 - `2.2.0` - From this version, giving you the flexibilities to describe what `data` type will be returned and how the shape of the `context` will be look like. And more...
+- `2.3.0` - added new status 'isSuccess'
   > Please install the latest version
 
 ## More Documentations
