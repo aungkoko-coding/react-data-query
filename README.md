@@ -8,7 +8,7 @@
 - ability to avoid race conditions.
 - reducing the number of render times as much as possible.
 - freshness of data are guaranteed (depends on passed `options` object).
-- can also be used to manage state as it has been built using callbacks and guarantee to re-render only affected components.
+- can also be used to share global state as it has been built using callbacks and guarantee to re-render only affected components.
 
 ## Description
 
