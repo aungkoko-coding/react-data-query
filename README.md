@@ -277,6 +277,7 @@ an object with the set of properties :
 | `data` | any \| `null`| Data that represents mutated data |
 | `error` | `Error` object| The reason why error occurred |
 | `isMutating` | `boolean` | Indicating whether data is mutating |
+| `isSuccess` | `boolean` | Indicating whether remote data is successfully mutated |
 | `isError` | `boolean` | Indicating whether the error has occurred |
 | `mutate` | `function` | It accepts one argument. When you call this function, it invokes `mutator` function with its argument. Before actual mutation, it invokes `onMutate` callback function first with its argument. |
 

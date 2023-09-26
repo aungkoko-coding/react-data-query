@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { MutatorFunType } from "../types/Hooks.type";
-
 export { MutatorFunType };
 
 export type MutationCallbacksType<MutatorInput, ReturnedData, Context> = {
@@ -32,18 +31,20 @@ export const useDataMutation = <
   mutator: MutatorFunType<ReturnedData>,
   callbacks?: MutationCallbacksType<MutatorInput, ReturnedData, Context>
 ) => {
-  const [isMutating, setIsMutating] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const [status, setStatus] = useState({
+    isMutating: false,
+    isSuccess: false,
+    isError: false,
+  });
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<ReturnedData | null | undefined>(null);
 
   const { onSuccess, onError, onSettled, onMutate } = callbacks || {};
 
   const mutate = async (newData: any) => {
-    setIsMutating(true);
-    setIsError(false);
+    setStatus({ isMutating: true, isSuccess: false, isError: false });
 
-    if (!isMutating) {
+    if (!status.isMutating) {
       let isError = false;
       let error: Error | null = null;
       let context: Context = null as Context;
@@ -61,20 +62,18 @@ export const useDataMutation = <
         typeof onError === "function" &&
           onError(error as Error, newData, context);
       } finally {
-        setIsError(isError);
         setError(error);
-        setIsMutating(false);
+        setStatus({ isMutating: false, isError, isSuccess: !isError });
         setData(data);
         typeof onSettled === "function" && onSettled(newData, error, context);
       }
     }
   };
 
-  return {
+  return Object.freeze({
     data,
-    isMutating,
-    isError,
+    ...status,
     error,
     mutate,
-  };
+  });
 };

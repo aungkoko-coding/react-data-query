@@ -12,10 +12,11 @@ export type MutationCallbacksType<MutatorInput, ReturnedData, Context> = {
  * @param {*} callbacks an object that contains callback methods such as onSuccess, onError, onSettled and onMutate
  * @returns
  */
-export declare const useDataMutation: <MutatorInput = any, ReturnedData = any, Context = any>(mutator: MutatorFunType<ReturnedData>, callbacks?: MutationCallbacksType<MutatorInput, ReturnedData, Context> | undefined) => {
-    data: ReturnedData | null | undefined;
-    isMutating: boolean;
-    isError: boolean;
+export declare const useDataMutation: <MutatorInput = any, ReturnedData = any, Context = any>(mutator: MutatorFunType<ReturnedData>, callbacks?: MutationCallbacksType<MutatorInput, ReturnedData, Context> | undefined) => Readonly<{
     error: Error | null;
     mutate: (newData: any) => Promise<void>;
-};
+    isMutating: boolean;
+    isSuccess: boolean;
+    isError: boolean;
+    data: ReturnedData | null | undefined;
+}>;

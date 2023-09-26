@@ -6,15 +6,17 @@ import { useState } from "react";
  * @returns
  */
 export const useDataMutation = (mutator, callbacks) => {
-    const [isMutating, setIsMutating] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [status, setStatus] = useState({
+        isMutating: false,
+        isSuccess: false,
+        isError: false,
+    });
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
     const { onSuccess, onError, onSettled, onMutate } = callbacks || {};
     const mutate = async (newData) => {
-        setIsMutating(true);
-        setIsError(false);
-        if (!isMutating) {
+        setStatus({ isMutating: true, isSuccess: false, isError: false });
+        if (!status.isMutating) {
             let isError = false;
             let error = null;
             let context = null;
@@ -33,19 +35,17 @@ export const useDataMutation = (mutator, callbacks) => {
                     onError(error, newData, context);
             }
             finally {
-                setIsError(isError);
                 setError(error);
-                setIsMutating(false);
+                setStatus({ isMutating: false, isError, isSuccess: !isError });
                 setData(data);
                 typeof onSettled === "function" && onSettled(newData, error, context);
             }
         }
     };
-    return {
+    return Object.freeze({
         data,
-        isMutating,
-        isError,
+        ...status,
         error,
         mutate,
-    };
+    });
 };
