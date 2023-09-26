@@ -8,11 +8,11 @@
 - ability to avoid race conditions.
 - reducing the number of render times as much as possible.
 - freshness of data are guaranteed (depends on passed `options` object).
-- can also be used to manage state as it has been built using callbacks and guarantee to re-render only affected components.
+- can also be used to share global state as it has been built using callbacks and guarantee to re-render only affected components.
 
 ## Description
 
-Client side data fetching and callback-based state management library. Library's syntaxes and functionalities are very similar to and inspired by [`react-query`](https://www.npmjs.com/package/@tanstack/react-query) library. RDQ makes network requests and cache the results along with the `dataQueryKey`.
+Client side asynchronous remote state management library. Library's syntaxes and functionalities are very similar to and inspired by [`react-query`](https://www.npmjs.com/package/@tanstack/react-query) library. RDQ makes network requests and cache the results along with the `dataQueryKey`.
 
 ## Version History
 

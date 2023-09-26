@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, createContext, useContext, isValidElement } from "react";
+import { useCallback, createContext, useContext } from "react";
 import { status } from "../utils/utils";
 import { cacheData } from "../utils/cache-utils";
 import {
@@ -55,8 +55,6 @@ export const DataQueryProvider = ({
 
   if (typeof options !== "object")
     throw new TypeError("'options' must be an object!");
-  if (!isValidElement(children))
-    throw new TypeError("'children' must be valid element");
   if (typeof staleTime !== "number")
     throw new TypeError("Please provide staleTime as number type");
   if (typeof cacheTime !== "number")
