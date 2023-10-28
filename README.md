@@ -12,7 +12,7 @@
 
 ## Description
 
-Client side data fetching and callback-based state management library. Library's syntaxes and functionalities are very similar to and inspired by [`react-query`](https://www.npmjs.com/package/@tanstack/react-query) library. RDQ makes network requests and cache the results along with the `dataQueryKey`.
+Client side asynchronous remote state management library. Library's syntaxes and functionalities are very similar to and inspired by [`react-query`](https://www.npmjs.com/package/@tanstack/react-query) library. RDQ makes network requests and cache the results along with the `dataQueryKey`.
 
 > I know this library is decreasing popularity because I initially released using JavaScript. So people who are using this have to look back documentation to know how to use exactly. But from version `2.1.0`, you will get the helps of Intellisense.
 
