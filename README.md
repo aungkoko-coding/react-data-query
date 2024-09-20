@@ -642,4 +642,4 @@ const { data: theme } = useDataQuery("theme", undefined, {
 
 ## Author
 
-[Aung Ko Ko](https://github.com/AKK-soft-dev)
+[Aung Ko Ko](https://github.com/aungkoko-coding)
